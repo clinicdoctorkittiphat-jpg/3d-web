@@ -308,6 +308,37 @@ textarea:focus {
   line-height: 1.55;
 }
 
+.auto-backup-card {
+  display: grid;
+  gap: 12px;
+  border: 1px solid #c9dfda;
+  border-radius: 8px;
+  padding: 12px;
+  background: #f3fbf8;
+}
+
+.auto-backup-card strong,
+.auto-backup-card span {
+  display: block;
+}
+
+.auto-backup-card span {
+  margin-top: 4px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.switch-row {
+  grid-template-columns: 20px minmax(0, 1fr);
+  align-items: center;
+}
+
+.switch-row input {
+  width: 18px;
+  min-height: 18px;
+  accent-color: var(--green);
+}
+
 .table-wrap {
   overflow-x: auto;
   border: 1px solid var(--line);

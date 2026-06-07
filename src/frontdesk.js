@@ -1,5 +1,8 @@
 const STORAGE_KEY = "kittiphat-frontdesk-payments-v1";
 const PIN_KEY = "kittiphat-frontdesk-pin-v1";
+const BACKUP_TIME_KEY = "kittiphat-frontdesk-backup-time-v1";
+const BACKUP_ENABLED_KEY = "kittiphat-frontdesk-backup-enabled-v1";
+const BACKUP_DONE_KEY = "kittiphat-frontdesk-backup-done-v1";
 
 const state = {
   payments: loadPayments(),
@@ -7,11 +10,15 @@ const state = {
   activeDate: today(),
   query: "",
   method: "all",
+  autoBackupEnabled: localStorage.getItem(BACKUP_ENABLED_KEY) !== "false",
+  autoBackupTime: localStorage.getItem(BACKUP_TIME_KEY) || "20:05",
 };
 
 const app = document.querySelector("#frontdesk-app");
+let autoBackupTimer = null;
 
 render();
+setupAutoBackup();
 
 function render() {
   app.innerHTML = hasPin() && !isUnlocked() ? lockTemplate() : appTemplate();
@@ -116,13 +123,27 @@ function appTemplate() {
           <div class="tool-buttons">
             <button class="ghost-button" data-action="export-csv">Export CSV วันนี้</button>
             <button class="ghost-button" data-action="export-csv-all">Export CSV ทั้งหมด</button>
+            <button class="ghost-button" data-action="backup-today">สำรองวันนี้ทันที</button>
             <label class="file-button">นำเข้าไฟล์สำรอง
               <input id="import-json" type="file" accept="application/json" />
             </label>
           </div>
+          <div class="auto-backup-card">
+            <div>
+              <strong>สำรองอัตโนมัติ</strong>
+              <span>${backupStatusText()}</span>
+            </div>
+            <label class="switch-row">
+              <input id="auto-backup-enabled" type="checkbox" ${state.autoBackupEnabled ? "checked" : ""} />
+              <span>เปิดใช้งาน</span>
+            </label>
+            <label>เวลาปิดยอด
+              <input id="auto-backup-time" type="time" value="${state.autoBackupTime}" />
+            </label>
+          </div>
           <div class="privacy-note">
             <strong>หมายเหตุความปลอดภัย</strong>
-            <span>เวอร์ชันนี้เหมาะกับการใช้ในเครื่อง/บัญชีคลินิกที่ควบคุมได้ หากต้องใช้หลายเครื่องพร้อมกันควรต่อฐานข้อมูลและระบบล็อกอินจริง</span>
+            <span>เมื่อถึงเวลาปิดยอด ระบบจะดาวน์โหลดไฟล์ backup ให้อัตโนมัติถ้าหน้านี้ยังเปิดอยู่ ตั้งค่า Chrome ให้บันทึกไฟล์ลง thumb drive ได้จาก Downloads settings</span>
           </div>
         </aside>
       </section>
@@ -217,6 +238,20 @@ function bindEvents() {
 
   document.querySelector("#import-json")?.addEventListener("change", importJson);
 
+  document.querySelector("#auto-backup-enabled")?.addEventListener("change", (event) => {
+    state.autoBackupEnabled = event.target.checked;
+    localStorage.setItem(BACKUP_ENABLED_KEY, String(state.autoBackupEnabled));
+    setupAutoBackup();
+    render();
+  });
+
+  document.querySelector("#auto-backup-time")?.addEventListener("change", (event) => {
+    state.autoBackupTime = event.target.value || "20:05";
+    localStorage.setItem(BACKUP_TIME_KEY, state.autoBackupTime);
+    setupAutoBackup();
+    render();
+  });
+
   document.querySelector("#unlock-form")?.addEventListener("submit", (event) => {
     event.preventDefault();
     const pin = new FormData(event.currentTarget).get("pin");
@@ -259,6 +294,7 @@ function handleAction(action, id) {
   if (action === "export-csv") exportCsv(filteredPayments(), `frontdesk-${state.activeDate}.csv`);
   if (action === "export-csv-all") exportCsv(state.payments, `frontdesk-all-${today()}.csv`);
   if (action === "export-json") exportJson();
+  if (action === "backup-today") exportDailyBackup(state.activeDate, "manual");
   if (action === "print") window.print();
   if (action === "lock") {
     if (!hasPin()) {
@@ -383,6 +419,30 @@ function exportJson() {
   download(new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" }), `frontdesk-backup-${today()}.json`);
 }
 
+function exportDailyBackup(date, mode = "manual") {
+  const rows = state.payments.filter((item) => item.date === date);
+  if (!rows.length && mode === "manual") {
+    alert("ยังไม่มีรายการของวันที่เลือกให้สำรอง");
+    return;
+  }
+  if (!rows.length) return;
+
+  const payload = {
+    exportedAt: new Date().toISOString(),
+    backupDate: date,
+    summary: summarize(rows),
+    payments: rows,
+  };
+  download(
+    new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" }),
+    `frontdesk-daily-backup-${date}.json`
+  );
+  localStorage.setItem(BACKUP_DONE_KEY, date);
+  if (mode === "manual") {
+    alert(`สำรองข้อมูลวันที่ ${formatThaiDate(date)} แล้ว`);
+  }
+}
+
 function importJson(event) {
   const file = event.target.files?.[0];
   if (!file) return;
@@ -436,6 +496,33 @@ function formatMoney(value) {
 
 function formatThaiDate(date) {
   return new Intl.DateTimeFormat("th-TH", { dateStyle: "medium" }).format(new Date(`${date}T00:00:00`));
+}
+
+function setupAutoBackup() {
+  if (autoBackupTimer) window.clearInterval(autoBackupTimer);
+  if (!state.autoBackupEnabled) return;
+  checkAutoBackup();
+  autoBackupTimer = window.setInterval(checkAutoBackup, 60 * 1000);
+}
+
+function checkAutoBackup() {
+  if (!state.autoBackupEnabled) return;
+  const date = today();
+  const lastDone = localStorage.getItem(BACKUP_DONE_KEY);
+  if (lastDone === date) return;
+  if (nowTime() < state.autoBackupTime) return;
+
+  const rows = state.payments.filter((item) => item.date === date);
+  if (!rows.length) return;
+  exportDailyBackup(date, "auto");
+  render();
+}
+
+function backupStatusText() {
+  if (!state.autoBackupEnabled) return "ปิดอยู่";
+  const lastDone = localStorage.getItem(BACKUP_DONE_KEY);
+  if (lastDone === today()) return `วันนี้สำรองแล้ว เวลา ${state.autoBackupTime}`;
+  return `จะดาวน์โหลด backup ทุกวันเวลา ${state.autoBackupTime} ถ้าเปิดหน้านี้ไว้`;
 }
 
 function hasPin() {
