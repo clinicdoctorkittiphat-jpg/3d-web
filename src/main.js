@@ -1,4 +1,4 @@
-document.querySelector('#app').innerHTML = `
+document.querySelector("#app").innerHTML = `
   <main class="page-shell">
     <section class="hero" aria-labelledby="clinic-title">
       <div class="hero-copy">
