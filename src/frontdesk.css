@@ -264,6 +264,12 @@ textarea:focus {
   background: var(--green-dark);
 }
 
+.compact-button {
+  width: auto;
+  margin-top: 0;
+  white-space: nowrap;
+}
+
 .ghost-button,
 .file-button,
 .row-actions button {

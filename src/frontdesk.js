@@ -3,6 +3,7 @@ const PIN_KEY = "kittiphat-frontdesk-pin-v1";
 const BACKUP_TIME_KEY = "kittiphat-frontdesk-backup-time-v1";
 const BACKUP_ENABLED_KEY = "kittiphat-frontdesk-backup-enabled-v1";
 const BACKUP_DONE_KEY = "kittiphat-frontdesk-backup-done-v1";
+const BACKUP_SIGNATURE_KEY = "kittiphat-frontdesk-backup-signature-v1";
 
 const state = {
   payments: loadPayments(),
@@ -19,6 +20,7 @@ let autoBackupTimer = null;
 
 render();
 setupAutoBackup();
+window.addEventListener("beforeunload", warnBeforeClose);
 
 function render() {
   app.innerHTML = hasPin() && !isUnlocked() ? lockTemplate() : appTemplate();
@@ -45,6 +47,7 @@ function appTemplate() {
         <div class="top-actions">
           <button class="ghost-button" data-action="print">พิมพ์รายงาน</button>
           <button class="ghost-button" data-action="export-json">สำรองข้อมูล</button>
+          <button class="primary-button compact-button" data-action="backup-and-close">ปิดแอปพร้อมสำรอง</button>
           <button class="danger-button" data-action="lock">ล็อกหน้าจอ</button>
         </div>
       </header>
@@ -143,7 +146,7 @@ function appTemplate() {
           </div>
           <div class="privacy-note">
             <strong>หมายเหตุความปลอดภัย</strong>
-            <span>เมื่อถึงเวลาปิดยอด ระบบจะดาวน์โหลดไฟล์ backup ให้อัตโนมัติถ้าหน้านี้ยังเปิดอยู่ ตั้งค่า Chrome ให้บันทึกไฟล์ลง thumb drive ได้จาก Downloads settings</span>
+            <span>ก่อนเลิกงานให้กดปุ่มปิดแอปพร้อมสำรอง ระบบจะดาวน์โหลดไฟล์ backup ล่าสุดให้ ถ้ากด X ปิดหน้าต่างโดยยังไม่ได้สำรอง แอปจะเตือนก่อนปิด</span>
           </div>
         </aside>
       </section>
@@ -216,6 +219,7 @@ function bindEvents() {
       }
       state.activeDate = payment.date;
       persist();
+      markBackupNeeded(payment.date);
       render();
     });
   }
@@ -279,6 +283,7 @@ function handleAction(action, id) {
     if (item && confirm(`ลบรายการของ ${item.name} จำนวน ${formatMoney(item.amount)} ใช่ไหม?`)) {
       state.payments = state.payments.filter((payment) => payment.id !== id);
       persist();
+      markBackupNeeded(item.date);
       render();
     }
   }
@@ -295,6 +300,7 @@ function handleAction(action, id) {
   if (action === "export-csv-all") exportCsv(state.payments, `frontdesk-all-${today()}.csv`);
   if (action === "export-json") exportJson();
   if (action === "backup-today") exportDailyBackup(state.activeDate, "manual");
+  if (action === "backup-and-close") backupAndClose();
   if (action === "print") window.print();
   if (action === "lock") {
     if (!hasPin()) {
@@ -438,9 +444,19 @@ function exportDailyBackup(date, mode = "manual") {
     `frontdesk-daily-backup-${date}.json`
   );
   localStorage.setItem(BACKUP_DONE_KEY, date);
+  localStorage.setItem(BACKUP_SIGNATURE_KEY, dailySignature(date));
   if (mode === "manual") {
     alert(`สำรองข้อมูลวันที่ ${formatThaiDate(date)} แล้ว`);
   }
+}
+
+function backupAndClose() {
+  exportDailyBackup(today(), "manual");
+  sessionStorage.removeItem("frontdesk-unlocked");
+  window.setTimeout(() => {
+    window.close();
+    render();
+  }, 300);
 }
 
 function importJson(event) {
@@ -456,6 +472,7 @@ function importJson(event) {
         state.payments = incoming;
         state.editingId = null;
         persist();
+        markBackupNeeded(today());
         render();
       }
     } catch {
@@ -508,8 +525,7 @@ function setupAutoBackup() {
 function checkAutoBackup() {
   if (!state.autoBackupEnabled) return;
   const date = today();
-  const lastDone = localStorage.getItem(BACKUP_DONE_KEY);
-  if (lastDone === date) return;
+  if (!needsBackup(date)) return;
   if (nowTime() < state.autoBackupTime) return;
 
   const rows = state.payments.filter((item) => item.date === date);
@@ -520,9 +536,34 @@ function checkAutoBackup() {
 
 function backupStatusText() {
   if (!state.autoBackupEnabled) return "ปิดอยู่";
-  const lastDone = localStorage.getItem(BACKUP_DONE_KEY);
-  if (lastDone === today()) return `วันนี้สำรองแล้ว เวลา ${state.autoBackupTime}`;
+  if (!needsBackup(today())) return "ข้อมูลล่าสุดของวันนี้สำรองแล้ว";
   return `จะดาวน์โหลด backup ทุกวันเวลา ${state.autoBackupTime} ถ้าเปิดหน้านี้ไว้`;
+}
+
+function warnBeforeClose(event) {
+  if (!needsBackup(today())) return;
+  event.preventDefault();
+  event.returnValue = "ยังไม่ได้สำรองข้อมูลล่าสุดของวันนี้ กรุณากดปุ่มปิดแอปพร้อมสำรองก่อนปิด";
+}
+
+function markBackupNeeded(date) {
+  if (date === localStorage.getItem(BACKUP_DONE_KEY)) {
+    localStorage.removeItem(BACKUP_SIGNATURE_KEY);
+  }
+}
+
+function needsBackup(date) {
+  const rows = state.payments.filter((item) => item.date === date);
+  if (!rows.length) return false;
+  return localStorage.getItem(BACKUP_DONE_KEY) !== date || localStorage.getItem(BACKUP_SIGNATURE_KEY) !== dailySignature(date);
+}
+
+function dailySignature(date) {
+  return state.payments
+    .filter((item) => item.date === date)
+    .map((item) => `${item.id}:${item.updatedAt}:${item.amount}:${item.method}`)
+    .sort()
+    .join("|");
 }
 
 function hasPin() {
