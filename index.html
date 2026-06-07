@@ -1,17 +1,960 @@
 <!doctype html>
 <html lang="th">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-9BHGD1S5YV"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag("js", new Date());
+      gtag("config", "G-9BHGD1S5YV");
+    </script>
+    <title>คลินิกกระดูกและข้อภูเก็ต | คลินิกกระดูกและข้อหมอกิตติพัฐ</title>
     <meta
       name="description"
-      content="เว็บไซต์หน้าเดียวสำหรับคลินิกกระดูกและข้อหมอกิตติพัฐ ดูแลอาการปวดข้อ ปวดหลัง บาดเจ็บจากกีฬา และปัญหาการเคลื่อนไหว"
+      content="คลินิกกระดูกและข้อภูเก็ต ตรวจรักษาปวดเข่า ปวดหลัง ปวดไหล่ มือชา นิ้วล็อค ข้อเสื่อม และเอกซเรย์ดิจิทัล โดยแพทย์เฉพาะทาง เน้นอธิบายชัดเจน ไม่รีบผ่าตัดโดยไม่จำเป็น"
     />
-    <title>คลินิกกระดูกและข้อหมอกิตติพัฐ</title>
-    <link rel="stylesheet" href="/src/styles.css" />
+    <meta name="theme-color" content="#556b4a" />
+    <style>
+      :root {
+        --olive: #5f7355;
+        --olive-dark: #243524;
+        --sage: #d9e3d3;
+        --sage-soft: #f1f6ee;
+        --beige: #f7f0e4;
+        --warm: #fffaf3;
+        --cream: #fffdfa;
+        --ink: #162018;
+        --muted: #66705f;
+        --line: #dfe4d7;
+        --gold: #b89a63;
+        --white: #ffffff;
+        --shadow: 0 24px 70px rgba(36, 53, 36, 0.13);
+        --soft-shadow: 0 14px 36px rgba(36, 53, 36, 0.08);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Noto Sans Thai", "Tahoma", system-ui, sans-serif;
+        color: var(--ink);
+        background: linear-gradient(180deg, var(--warm), var(--cream) 36%, var(--warm));
+        line-height: 1.72;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .page {
+        overflow: hidden;
+      }
+
+      .container {
+        width: min(1120px, calc(100% - 32px));
+        margin: 0 auto;
+      }
+
+      .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        background: rgba(255, 253, 250, 0.88);
+        border-bottom: 1px solid rgba(223, 228, 215, 0.9);
+        box-shadow: 0 10px 28px rgba(36, 53, 36, 0.05);
+        backdrop-filter: blur(18px);
+      }
+
+      .nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        min-height: 70px;
+      }
+
+      .brand {
+        display: grid;
+        gap: 2px;
+      }
+
+      .brand strong {
+        color: var(--olive-dark);
+        font-size: clamp(1rem, 3.8vw, 1.2rem);
+        line-height: 1.35;
+      }
+
+      .brand span {
+        color: var(--muted);
+        font-size: 0.84rem;
+      }
+
+      .nav-actions {
+        display: none;
+        gap: 10px;
+      }
+
+      .button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        min-height: 46px;
+        padding: 10px 18px;
+        border: 1px solid transparent;
+        border-radius: 999px;
+        font-weight: 700;
+        line-height: 1.25;
+        transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+      }
+
+      .button:hover {
+        transform: translateY(-1px);
+      }
+
+      .button.primary {
+        color: var(--white);
+        background: linear-gradient(135deg, var(--olive-dark), var(--olive));
+        box-shadow: 0 16px 34px rgba(36, 53, 36, 0.24);
+      }
+
+      .button.secondary {
+        color: var(--olive-dark);
+        background: rgba(255, 255, 255, 0.74);
+        border-color: var(--line);
+      }
+
+      .button.line {
+        color: #113f22;
+        background: #e6f6e5;
+        border-color: #c8e8c8;
+      }
+
+      .hero {
+        position: relative;
+        padding: 50px 0 34px;
+        background:
+          linear-gradient(115deg, rgba(255, 250, 243, 0.96), rgba(241, 246, 238, 0.9) 52%, rgba(247, 240, 228, 0.86)),
+          radial-gradient(circle at 16% 18%, rgba(184, 154, 99, 0.13), transparent 28%);
+      }
+
+      .hero::after {
+        content: "";
+        position: absolute;
+        inset: auto 0 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(184, 154, 99, 0.5), transparent);
+      }
+
+      .hero-grid {
+        display: grid;
+        gap: 28px;
+        align-items: center;
+      }
+
+      .trust-row {
+        display: grid;
+        gap: 10px;
+        margin-top: 24px;
+      }
+
+      .trust-item {
+        padding: 13px 14px;
+        background: rgba(255, 255, 255, 0.68);
+        border: 1px solid rgba(223, 228, 215, 0.9);
+        border-radius: 8px;
+      }
+
+      .trust-item strong {
+        display: block;
+        color: var(--olive-dark);
+        font-size: 1.02rem;
+        line-height: 1.25;
+      }
+
+      .trust-item span {
+        display: block;
+        color: var(--muted);
+        font-size: 0.85rem;
+        line-height: 1.45;
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        width: fit-content;
+        align-items: center;
+        gap: 8px;
+        padding: 7px 12px;
+        color: var(--olive-dark);
+        background: rgba(255, 255, 255, 0.76);
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        font-size: 0.86rem;
+        font-weight: 700;
+      }
+
+      .eyebrow::before {
+        content: "";
+        width: 8px;
+        height: 8px;
+        background: var(--gold);
+        border-radius: 50%;
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin-top: 0;
+      }
+
+      h1 {
+        max-width: none;
+        margin-bottom: 20px;
+        color: var(--olive-dark);
+        font-size: clamp(1.28rem, 3.45vw, 2.88rem);
+        line-height: 1.16;
+        letter-spacing: 0;
+        white-space: nowrap;
+      }
+
+      h1 span {
+        display: inline;
+      }
+
+      h1 .headline-main {
+        color: var(--olive-dark);
+      }
+
+      h1 .headline-care {
+        padding: 0 0.12em 0.08em;
+        color: var(--olive);
+        background: linear-gradient(180deg, transparent 62%, rgba(184, 154, 99, 0.2) 62%);
+      }
+
+      .lead {
+        max-width: 650px;
+        margin-bottom: 26px;
+        color: var(--muted);
+        font-size: clamp(1.03rem, 3.3vw, 1.2rem);
+      }
+
+      .hero-actions,
+      .cta-actions {
+        display: grid;
+        gap: 12px;
+      }
+
+      .walkin-note {
+        display: inline-flex;
+        width: fit-content;
+        margin-top: 16px;
+        padding: 9px 13px;
+        color: var(--olive-dark);
+        background: rgba(255, 255, 255, 0.78);
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        font-size: 0.94rem;
+        font-weight: 700;
+      }
+
+      .hero-panel {
+        width: min(100%, 390px);
+        padding: 14px;
+        background: rgba(255, 255, 255, 0.76);
+        border: 1px solid rgba(223, 228, 215, 0.96);
+        border-radius: 8px;
+        box-shadow: var(--shadow);
+        justify-self: end;
+      }
+
+      .hero-image {
+        position: relative;
+        min-height: 250px;
+        border-radius: 8px;
+        overflow: hidden;
+      }
+
+      .hero-image img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        min-height: 250px;
+        object-fit: cover;
+        object-position: center top;
+      }
+
+      .image-note {
+        position: static;
+        max-width: none;
+        margin-top: 10px;
+        padding: 10px 12px;
+        color: var(--olive-dark);
+        background: rgba(255, 255, 255, 0.78);
+        border: 1px solid var(--line);
+        border-radius: 6px;
+      }
+
+      .image-note strong {
+        display: block;
+        font-size: 0.98rem;
+        line-height: 1.18;
+      }
+
+      .image-note span {
+        display: block;
+        color: var(--muted);
+        font-size: 0.82rem;
+        line-height: 1.28;
+        white-space: nowrap;
+      }
+
+      @media (max-width: 420px) {
+        .image-note span {
+          white-space: normal;
+        }
+      }
+
+      .clinic-photos {
+        padding: 22px 0 0;
+        background: var(--warm);
+      }
+
+      .photo-strip {
+        display: grid;
+        gap: 12px;
+        max-width: 860px;
+        margin: 0 auto;
+      }
+
+      .photo-card {
+        position: relative;
+        margin: 0;
+        min-height: 170px;
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--sage-soft);
+        box-shadow: var(--soft-shadow);
+      }
+
+      .photo-card img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        min-height: 170px;
+        object-fit: cover;
+        object-position: center top;
+      }
+
+      .photo-card span {
+        position: absolute;
+        right: 10px;
+        bottom: 10px;
+        left: 10px;
+        padding: 8px 10px;
+        color: var(--white);
+        background: rgba(51, 66, 47, 0.78);
+        border-radius: 6px;
+        font-size: 0.88rem;
+        font-weight: 700;
+      }
+
+      .intro-band {
+        padding: 34px 0 10px;
+        background: var(--cream);
+      }
+
+      .intro-panel {
+        display: grid;
+        gap: 14px;
+        padding: 22px;
+        background: var(--white);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        box-shadow: var(--soft-shadow);
+      }
+
+      .intro-panel strong {
+        color: var(--olive-dark);
+        font-size: clamp(1rem, 2.2vw, 1.32rem);
+        line-height: 1.35;
+        white-space: nowrap;
+      }
+
+      @media (max-width: 560px) {
+        .intro-panel strong {
+          font-size: clamp(0.88rem, 4.2vw, 1rem);
+        }
+      }
+
+      .intro-panel p {
+        margin: 0;
+        color: var(--muted);
+      }
+
+      section {
+        padding: 48px 0;
+      }
+
+      .section-head {
+        display: grid;
+        gap: 8px;
+        margin-bottom: 22px;
+      }
+
+      .section-head h2 {
+        margin-bottom: 0;
+        color: var(--olive-dark);
+        font-size: clamp(1.55rem, 5vw, 2.35rem);
+        line-height: 1.25;
+      }
+
+      .section-head p {
+        margin: 0;
+        color: var(--muted);
+      }
+
+      .services-grid,
+      .why-grid {
+        display: grid;
+        gap: 12px;
+      }
+
+      .card {
+        min-height: 104px;
+        padding: 20px;
+        background: var(--white);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        box-shadow: var(--soft-shadow);
+      }
+
+      .card h3 {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 4px;
+        color: var(--olive-dark);
+        font-size: 1.05rem;
+      }
+
+      .icon {
+        display: inline-grid;
+        flex: 0 0 auto;
+        place-items: center;
+        width: 34px;
+        height: 34px;
+        color: var(--olive-dark);
+        background: linear-gradient(180deg, #fff8ec, var(--sage-soft));
+        border: 1px solid rgba(184, 154, 99, 0.2);
+        border-radius: 6px;
+      }
+
+      .card p,
+      .hours-card p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.95rem;
+      }
+
+      .why {
+        background: var(--sage-soft);
+      }
+
+      .why .card {
+        background: rgba(255, 255, 255, 0.74);
+      }
+
+      .faq-list {
+        display: grid;
+        gap: 10px;
+      }
+
+      details {
+        background: var(--white);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        box-shadow: var(--soft-shadow);
+      }
+
+      summary {
+        cursor: pointer;
+        padding: 16px 18px;
+        color: var(--olive-dark);
+        font-weight: 800;
+        list-style: none;
+      }
+
+      summary::-webkit-details-marker {
+        display: none;
+      }
+
+      summary::after {
+        content: "+";
+        float: right;
+        color: var(--olive);
+        font-size: 1.18rem;
+      }
+
+      details[open] summary::after {
+        content: "-";
+      }
+
+      details p {
+        margin: 0;
+        padding: 0 18px 18px;
+        color: var(--muted);
+      }
+
+      .info {
+        background: var(--beige);
+      }
+
+      .info-grid {
+        display: grid;
+        gap: 14px;
+      }
+
+      .hours-card,
+      .map-placeholder {
+        padding: 22px;
+        background: var(--white);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        box-shadow: var(--shadow);
+      }
+
+      .hours-list {
+        display: grid;
+        gap: 10px;
+        margin-top: 18px;
+      }
+
+      .hours-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 18px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .hours-row:last-child {
+        border-bottom: 0;
+        padding-bottom: 0;
+      }
+
+      .hours-row strong {
+        color: var(--olive-dark);
+      }
+
+      .map-placeholder {
+        display: grid;
+        min-height: 300px;
+        place-items: center;
+        text-align: center;
+        overflow: hidden;
+      }
+
+      .map-placeholder iframe {
+        display: block;
+        width: 100%;
+        height: 100%;
+        min-height: 300px;
+        border: 0;
+      }
+
+      .cta {
+        padding: 42px 0 88px;
+        color: var(--white);
+        background:
+          linear-gradient(135deg, rgba(36, 53, 36, 0.97), rgba(70, 89, 63, 0.95)),
+          radial-gradient(circle at 12% 20%, rgba(184, 154, 99, 0.18), transparent 34%);
+      }
+
+      .cta h2 {
+        margin-bottom: 8px;
+        font-size: clamp(1.55rem, 5vw, 2.5rem);
+        line-height: 1.25;
+      }
+
+      .cta p {
+        color: rgba(255, 255, 255, 0.76);
+      }
+
+      .cta .button.secondary {
+        color: var(--olive-dark);
+        background: var(--white);
+      }
+
+      .footer {
+        padding: 24px 0;
+        color: var(--muted);
+        background: var(--warm);
+        font-size: 0.92rem;
+      }
+
+      .footer-inner {
+        display: grid;
+        gap: 8px;
+      }
+
+      @media (min-width: 620px) {
+        .hero-actions,
+        .cta-actions {
+          display: flex;
+          flex-wrap: wrap;
+        }
+
+        .services-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .why-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .photo-strip {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .trust-row {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        .intro-panel {
+          grid-template-columns: 0.8fr 1.2fr;
+          align-items: center;
+        }
+      }
+
+      @media (min-width: 860px) {
+        .nav-actions {
+          display: flex;
+        }
+
+        .hero {
+          padding: 76px 0 50px;
+        }
+
+        .hero-grid {
+          grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.55fr);
+        }
+
+        .services-grid {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        .why-grid {
+          grid-template-columns: repeat(4, minmax(0, 1fr));
+        }
+
+        .info-grid {
+          grid-template-columns: 0.82fr 1.18fr;
+          align-items: stretch;
+        }
+
+        section {
+          padding: 68px 0;
+        }
+
+        .footer-inner {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        }
+      }
+
+      @media (max-width: 380px) {
+        .container {
+          width: min(100% - 22px, 1120px);
+        }
+
+        h1 {
+          font-size: clamp(1.02rem, 5.25vw, 1.22rem);
+        }
+
+        .button {
+          padding-inline: 12px;
+          font-size: 0.92rem;
+        }
+      }
+    </style>
   </head>
   <body>
-    <div id="app"></div>
-    <script type="module" src="/src/main.js"></script>
+    <div class="page">
+      <header class="topbar" aria-label="ส่วนหัวเว็บไซต์">
+        <div class="container nav">
+          <a class="brand" href="#top" aria-label="กลับไปหน้าแรก">
+            <strong>คลินิกกระดูกและข้อหมอกิตติพัฐ</strong>
+            <span>Orthopedic Clinic Phuket</span>
+          </a>
+          <div class="nav-actions" aria-label="ปุ่มติดต่อ">
+            <a class="button secondary" href="tel:+66811481780">โทร 081-148-1780</a>
+            <a class="button line" href="https://line.me/R/ti/p/@drkittiphat" target="_blank" rel="noreferrer">LINE Official</a>
+          </div>
+        </div>
+      </header>
+
+      <main id="top">
+        <section class="hero" aria-labelledby="hero-title">
+          <div class="container hero-grid">
+            <div>
+              <p class="eyebrow">คลินิกกระดูกและข้อในภูเก็ต</p>
+              <h1 id="hero-title"><span class="headline-main">ปวดกระดูก ปวดข้อ</span> <span class="headline-care">ให้หมอตังดูแล</span></h1>
+              <p class="lead">ตรวจรักษาอาการปวดเข่า ปวดหลัง ปวดไหล่ มือชา นิ้วล็อค และข้อเสื่อม โดยแพทย์เฉพาะทางกระดูกและข้อ พร้อมอธิบายทางเลือกอย่างชัดเจน</p>
+              <div class="hero-actions">
+                <a class="button primary" href="tel:+66811481780" aria-label="โทรคลินิกกระดูกและข้อหมอกิตติพัฐ 081-148-1780">โทร 081-148-1780</a>
+                <a class="button line" href="https://line.me/R/ti/p/@drkittiphat" target="_blank" rel="noreferrer" aria-label="ติดต่อผ่าน LINE Official @drkittiphat">LINE Official</a>
+                <a class="button secondary" href="#services">ดูบริการ</a>
+              </div>
+              <p class="walkin-note">Walk-in ได้ในเวลาเปิดทำการ</p>
+              <div class="trust-row" aria-label="จุดเด่นของคลินิก">
+                <div class="trust-item">
+                  <strong>แพทย์เฉพาะทาง</strong>
+                  <span>ดูแลโดยแพทย์กระดูกและข้อ</span>
+                </div>
+                <div class="trust-item">
+                  <strong>เอกซเรย์ดิจิทัล</strong>
+                  <span>ช่วยประเมินอาการได้ชัดเจน</span>
+                </div>
+                <div class="trust-item">
+                  <strong>ไม่รีบผ่าตัด</strong>
+                  <span>เริ่มจากแนวทางที่เหมาะสมก่อน</span>
+                </div>
+              </div>
+            </div>
+            <div class="hero-panel" aria-label="ข้อมูลคลินิก">
+              <div class="hero-image">
+                <img src="doctor-knee-consult.webp" alt="หมอกิตติพัฐอธิบายอาการข้อเข่าให้ผู้ป่วยในคลินิกกระดูกและข้อ" />
+                <div class="image-note">
+                  <strong>Specialist</strong>
+                  <span>อธิบายชัดเจน เน้นการรักษาที่เหมาะสม</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="clinic-photos" aria-label="ภาพบรรยากาศคลินิก">
+          <div class="container photo-strip">
+            <figure class="photo-card">
+              <img src="doctor-exam.webp" alt="หมอกิตติพัฐตรวจประเมินอาการผู้ป่วยในห้องตรวจ" loading="lazy" />
+              <span>ตรวจประเมินโดยแพทย์เฉพาะทาง</span>
+            </figure>
+            <figure class="photo-card">
+              <img src="doctor-portrait.webp" alt="หมอกิตติพัฐ แพทย์เฉพาะทางกระดูกและข้อประจำคลินิก" loading="lazy" />
+              <span>คลินิกกระดูกและข้อหมอกิตติพัฐ</span>
+            </figure>
+          </div>
+        </section>
+
+        <section class="intro-band" aria-label="แนวทางการดูแล">
+          <div class="container">
+            <div class="intro-panel">
+              <strong>ดูแลอาการปวดให้กลับไปใช้ชีวิตได้มั่นใจขึ้น</strong>
+              <p>เหมาะสำหรับผู้ที่มีอาการปวดเรื้อรัง ปวดจากการใช้งาน หรือเริ่มกังวลเรื่องข้อเสื่อม โดยเน้นตรวจหาสาเหตุ อธิบายผล และวางแผนรักษาเป็นขั้นตอน</p>
+            </div>
+          </div>
+        </section>
+
+        <section id="services" aria-labelledby="services-title">
+          <div class="container">
+            <div class="section-head">
+              <h2 id="services-title">บริการตรวจรักษา</h2>
+              <p>ดูแลอาการปวดและปัญหากระดูกข้อที่พบบ่อย ด้วยแนวทางที่เหมาะกับแต่ละคน</p>
+            </div>
+            <div class="services-grid">
+              <article class="card">
+                <h3><span class="icon">01</span>ปวดเข่า / ข้อเข่าเสื่อม</h3>
+                <p>ประเมินสาเหตุ วางแผนลดปวด ฟื้นฟูการใช้งาน และชะลอข้อเสื่อม</p>
+              </article>
+              <article class="card">
+                <h3><span class="icon">02</span>ปวดหลัง / ปวดร้าวลงขา</h3>
+                <p>ตรวจอาการปวดหลัง เส้นประสาทถูกกดทับ และอาการร้าวลงขา</p>
+              </article>
+              <article class="card">
+                <h3><span class="icon">03</span>ปวดคอ บ่า ไหล่</h3>
+                <p>ดูแลออฟฟิศซินโดรม ไหล่ติด เอ็นอักเสบ และปัญหาการเคลื่อนไหว</p>
+              </article>
+              <article class="card">
+                <h3><span class="icon">04</span>มือชา / นิ้วล็อค</h3>
+                <p>ตรวจอาการชา เจ็บนิ้ว ขยับติด และปัญหาเส้นเอ็นบริเวณมือ</p>
+              </article>
+              <article class="card">
+                <h3><span class="icon">05</span>อาการบาดเจ็บจากการใช้งานและกีฬา</h3>
+                <p>ประเมินอาการบาดเจ็บจากการทำงาน ออกกำลังกาย และกีฬา</p>
+              </article>
+              <article class="card">
+                <h3><span class="icon">06</span>เอกซเรย์ดิจิทัล</h3>
+                <p>ช่วยประเมินกระดูกและข้อได้ชัดเจน เพื่อประกอบการวางแผนรักษา</p>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <section class="why" aria-labelledby="why-title">
+          <div class="container">
+            <div class="section-head">
+              <h2 id="why-title">ทำไมเลือกคลินิกเรา</h2>
+              <p>แนวทางการดูแลแบบสมัยใหม่ ชัดเจน และยึดประโยชน์ของผู้ป่วยเป็นหลัก</p>
+            </div>
+            <div class="why-grid">
+              <article class="card">
+                <h3><span class="icon">✓</span>อธิบายเข้าใจง่าย</h3>
+                <p>อธิบายอาการ สาเหตุ และทางเลือกการรักษาเป็นภาษาที่เข้าใจได้</p>
+              </article>
+              <article class="card">
+                <h3><span class="icon">✓</span>ไม่รีบผ่าตัดโดยไม่จำเป็น</h3>
+                <p>เริ่มจากแนวทางอนุรักษ์นิยมเมื่อเหมาะสม และให้ข้อมูลก่อนตัดสินใจ</p>
+              </article>
+              <article class="card">
+                <h3><span class="icon">✓</span>รักษาตามความเหมาะสม</h3>
+                <p>พิจารณาจากอาการ ความรุนแรง ไลฟ์สไตล์ และเป้าหมายของผู้ป่วย</p>
+              </article>
+              <article class="card">
+                <h3><span class="icon">✓</span>ดูแลโดยแพทย์เฉพาะทาง</h3>
+                <p>ประเมินและดูแลโดยแพทย์เฉพาะทางกระดูกและข้อ</p>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <section aria-labelledby="faq-title">
+          <div class="container">
+            <div class="section-head">
+              <h2 id="faq-title">คำถามที่พบบ่อย</h2>
+              <p>ข้อมูลเบื้องต้นก่อนเข้ารับการตรวจที่คลินิก</p>
+            </div>
+            <div class="faq-list">
+              <details>
+                <summary>ปวดเข่าควรมาพบแพทย์เมื่อไร?</summary>
+                <p>หากปวดต่อเนื่อง เดินลำบาก มีบวม เสียวเข่า หรืออาการไม่ดีขึ้นหลังพัก ควรพบแพทย์เพื่อประเมินสาเหตุและแนวทางรักษาที่เหมาะสม</p>
+              </details>
+              <details>
+                <summary>ข้อเข่าเสื่อมจำเป็นต้องผ่าตัดไหม?</summary>
+                <p>ไม่จำเป็นเสมอไป หลายรายดูแลได้ด้วยการปรับกิจกรรม กายภาพ ยา หรือหัตถการบางอย่าง การผ่าตัดจะพิจารณาเมื่อเหมาะสมจริง ๆ</p>
+              </details>
+              <details>
+                <summary>ปวดหลังร้าวลงขาเกิดจากอะไร?</summary>
+                <p>อาจเกิดจากกล้ามเนื้อ หมอนรองกระดูก เส้นประสาท หรือโครงสร้างกระดูกสันหลัง แพทย์จะซักประวัติ ตรวจร่างกาย และพิจารณาการตรวจเพิ่มเติมตามความจำเป็น</p>
+              </details>
+              <details>
+                <summary>มือชาและนิ้วล็อครักษาอย่างไร?</summary>
+                <p>การรักษาขึ้นกับสาเหตุและความรุนแรง อาจเริ่มจากยา การพักใช้งาน อุปกรณ์พยุง การฉีดยา หรือแนวทางอื่นตามการประเมิน</p>
+              </details>
+              <details>
+                <summary>ปวดไหล่หรือไหล่ติดต้องทำอย่างไร?</summary>
+                <p>ควรตรวจเพื่อแยกว่าเป็นเอ็นอักเสบ ไหล่ติด หรือปัญหาอื่น การรักษามักเน้นลดปวดและฟื้นช่วงการเคลื่อนไหวอย่างค่อยเป็นค่อยไป</p>
+              </details>
+              <details>
+                <summary>มีเอกซเรย์ที่คลินิกไหม?</summary>
+                <p>มีพื้นที่สำหรับเอกซเรย์ดิจิทัล ช่วยให้แพทย์ประเมินกระดูกและข้อได้สะดวกขึ้นเมื่อต้องใช้ภาพประกอบการวินิจฉัย</p>
+              </details>
+              <details>
+                <summary>Walk-in เข้ารับบริการได้เลยไหม?</summary>
+                <p>สามารถ walk-in เข้ารับบริการได้เลยในเวลาเปิดทำการ หรือโทรสอบถามก่อนเข้ามาได้ที่ 081-148-1780 หากมีอาการฉุกเฉินควรไปโรงพยาบาลทันที</p>
+              </details>
+              <details>
+                <summary>ควรเตรียมอะไรไปพบแพทย์?</summary>
+                <p>นำประวัติยา โรคประจำตัว ผลตรวจเดิม ภาพเอกซเรย์หรือ MRI เดิม และจดอาการสำคัญ เช่น จุดที่ปวด ระยะเวลา และกิจกรรมที่ทำให้อาการแย่ลง</p>
+              </details>
+              <details>
+                <summary>คลินิกเหมาะกับผู้สูงอายุไหม?</summary>
+                <p>เหมาะสำหรับการประเมินอาการปวดข้อ ข้อเสื่อม ปวดหลัง และปัญหาการเดิน โดยเน้นอธิบายทางเลือกการรักษาอย่างชัดเจน</p>
+              </details>
+              <details>
+                <summary>รักษาอาการบาดเจ็บจากกีฬาได้ไหม?</summary>
+                <p>สามารถประเมินอาการบาดเจ็บจากการใช้งานและกีฬา เช่น ปวดเข่า ปวดไหล่ ข้อแพลง หรือเอ็นอักเสบ เพื่อวางแผนกลับไปใช้งานอย่างเหมาะสม</p>
+              </details>
+            </div>
+          </div>
+        </section>
+
+        <section class="info" aria-labelledby="hours-title">
+          <div class="container info-grid">
+            <div class="hours-card">
+              <div class="section-head">
+                <h2 id="hours-title">เวลาเปิดทำการ</h2>
+                <p>Walk-in ได้ในเวลาเปิดทำการ หรือโทรสอบถามก่อนเข้ามาได้ที่ 081-148-1780</p>
+              </div>
+              <div class="hours-list" aria-label="เวลาเปิดทำการ">
+                <div class="hours-row">
+                  <strong>จันทร์ - ศุกร์</strong>
+                  <span>17:00 - 20:00</span>
+                </div>
+                <div class="hours-row">
+                  <strong>เสาร์</strong>
+                  <span>09:00 - 12:00</span>
+                </div>
+                <div class="hours-row">
+                  <strong>อาทิตย์</strong>
+                  <span>ปิดทำการ</span>
+                </div>
+              </div>
+            </div>
+            <div class="map-placeholder" aria-label="แผนที่ Google Map คลินิกกระดูกและข้อหมอกิตติพัฐ">
+              <iframe
+                title="Google Map คลินิกกระดูกและข้อหมอกิตติพัฐ"
+                src="https://maps.google.com/maps?q=%E0%B8%84%E0%B8%A5%E0%B8%B4%E0%B8%99%E0%B8%B4%E0%B8%81%E0%B8%81%E0%B8%A3%E0%B8%B0%E0%B8%94%E0%B8%B9%E0%B8%81%E0%B9%81%E0%B8%A5%E0%B8%B0%E0%B8%82%E0%B9%89%E0%B8%AD%E0%B8%AB%E0%B8%A1%E0%B8%AD%E0%B8%81%E0%B8%B4%E0%B8%95%E0%B8%95%E0%B8%B4%E0%B8%9E%E0%B8%B1%E0%B8%90%20Phuket&output=embed"
+                loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"
+              ></iframe>
+            </div>
+          </div>
+        </section>
+
+        <section id="contact" class="cta" aria-labelledby="cta-title">
+          <div class="container">
+            <h2 id="cta-title">ให้หมอตังช่วยประเมินอาการของคุณ</h2>
+            <p>Walk-in เข้ารับการตรวจได้เลย หรือโทร 081-148-1780 เพื่อสอบถามเวลาเปิดทำการและข้อมูลการเข้ารับบริการ</p>
+            <div class="cta-actions">
+              <a class="button secondary" href="tel:+66811481780">โทร 081-148-1780</a>
+              <a class="button line" href="https://line.me/R/ti/p/@drkittiphat" target="_blank" rel="noreferrer">ติดต่อ LINE Official</a>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer class="footer">
+        <div class="container footer-inner">
+          <span>© คลินิกกระดูกและข้อหมอกิตติพัฐ</span>
+          <span>Modern non-surgical orthopedic care in Phuket</span>
+        </div>
+      </footer>
+    </div>
+    <script>
+      document.querySelectorAll('a[href^="tel:"]').forEach((link) => {
+        link.addEventListener("click", () => {
+          if (typeof gtag === "function") {
+            gtag("event", "click_call", {
+              event_category: "lead",
+              event_label: "phone"
+            });
+          }
+        });
+      });
+
+      document.querySelectorAll('a[href*="line.me"]').forEach((link) => {
+        link.addEventListener("click", () => {
+          if (typeof gtag === "function") {
+            gtag("event", "click_line", {
+              event_category: "lead",
+              event_label: "line_official"
+            });
+          }
+        });
+      });
+    </script>
   </body>
 </html>
