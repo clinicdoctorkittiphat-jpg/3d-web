@@ -1,5 +1,7 @@
 const STORAGE_KEY = "kittiphat-frontdesk-payments-v1";
 const PIN_KEY = "kittiphat-frontdesk-pin-v1";
+const PIN_HASH_KEY = "kittiphat-frontdesk-pin-hash-v2";
+const UNLOCK_KEY = "frontdesk-unlocked";
 const BACKUP_TIME_KEY = "kittiphat-frontdesk-backup-time-v1";
 const BACKUP_ENABLED_KEY = "kittiphat-frontdesk-backup-enabled-v1";
 const BACKUP_DONE_KEY = "kittiphat-frontdesk-backup-done-v1";
@@ -28,7 +30,7 @@ function render() {
   if (editingItem && editingItem.date !== state.activeDate) {
     state.editingId = null;
   }
-  app.innerHTML = hasPin() && !isUnlocked() ? lockTemplate() : appTemplate();
+  app.innerHTML = isUnlocked() ? appTemplate() : lockTemplate();
   bindEvents();
 }
 
@@ -182,16 +184,17 @@ function appTemplate() {
 }
 
 function lockTemplate() {
+  const needsSetup = !hasPin();
   return `
     <main class="lock-screen">
       <form class="lock-card" id="unlock-form">
         <p class="eyebrow">Clinic front desk</p>
-        <h1>เข้าสู่ระบบรับเงิน</h1>
-        <p>กรอก PIN เพื่อดูและบันทึกรายการรับเงินหน้าห้อง</p>
+        <h1>${needsSetup ? "ตั้ง PIN ก่อนใช้งาน" : "เข้าสู่ระบบรับเงิน"}</h1>
+        <p>${needsSetup ? "ตั้ง PIN ตัวเลข 6-12 หลักเพื่อป้องกันข้อมูลรับเงินในเครื่องนี้" : "กรอก PIN เพื่อดูและบันทึกรายการรับเงินหน้าห้อง"}</p>
         <label>PIN
-          <input name="pin" type="password" inputmode="numeric" autocomplete="current-password" required autofocus />
+          <input name="pin" type="password" inputmode="numeric" autocomplete="${needsSetup ? "new-password" : "current-password"}" minlength="6" maxlength="12" pattern="[0-9]{6,12}" required autofocus />
         </label>
-        <button class="primary-button" type="submit">เข้าสู่ระบบ</button>
+        <button class="primary-button" type="submit">${needsSetup ? "ตั้ง PIN และเข้าใช้งาน" : "เข้าสู่ระบบ"}</button>
         <small id="lock-message"></small>
       </form>
     </main>
@@ -248,15 +251,28 @@ function bindEvents() {
     render();
   });
 
-  document.querySelector("#unlock-form")?.addEventListener("submit", (event) => {
+  document.querySelector("#unlock-form")?.addEventListener("submit", async (event) => {
     event.preventDefault();
-    const pin = new FormData(event.currentTarget).get("pin");
-    if (pin === localStorage.getItem(PIN_KEY)) {
-      sessionStorage.setItem("frontdesk-unlocked", "true");
+    const pin = String(new FormData(event.currentTarget).get("pin") || "");
+    const message = document.querySelector("#lock-message");
+    if (!isValidPin(pin)) {
+      message.textContent = "PIN ต้องเป็นตัวเลข 6-12 หลัก";
+      return;
+    }
+
+    if (!hasPin()) {
+      await storePin(pin);
+      sessionStorage.setItem(UNLOCK_KEY, "true");
       render();
       return;
     }
-    document.querySelector("#lock-message").textContent = "PIN ไม่ถูกต้อง";
+
+    if (await verifyPin(pin)) {
+      sessionStorage.setItem(UNLOCK_KEY, "true");
+      render();
+      return;
+    }
+    message.textContent = "PIN ไม่ถูกต้อง";
   });
 
   document.querySelectorAll("[data-action]").forEach((button) => {
@@ -293,12 +309,7 @@ function handleAction(action, id) {
   if (action === "backup-and-close") backupAndClose();
   if (action === "print") window.print();
   if (action === "lock") {
-    if (!hasPin()) {
-      const pin = prompt("ตั้ง PIN สำหรับล็อกหน้าจอ เช่น 123456");
-      if (!pin) return;
-      localStorage.setItem(PIN_KEY, pin);
-    }
-    sessionStorage.removeItem("frontdesk-unlocked");
+    sessionStorage.removeItem(UNLOCK_KEY);
     render();
   }
 }
@@ -437,7 +448,7 @@ function exportDailyBackup(date, mode = "manual") {
 
 function backupAndClose() {
   exportDailyBackup(today(), "manual");
-  sessionStorage.removeItem("frontdesk-unlocked");
+  sessionStorage.removeItem(UNLOCK_KEY);
   window.setTimeout(() => {
     window.close();
     render();
@@ -599,11 +610,38 @@ function dailySignature(date) {
 }
 
 function hasPin() {
-  return Boolean(localStorage.getItem(PIN_KEY));
+  return Boolean(localStorage.getItem(PIN_HASH_KEY) || localStorage.getItem(PIN_KEY));
 }
 
 function isUnlocked() {
-  return sessionStorage.getItem("frontdesk-unlocked") === "true";
+  return sessionStorage.getItem(UNLOCK_KEY) === "true";
+}
+
+function isValidPin(pin) {
+  return /^[0-9]{6,12}$/.test(pin);
+}
+
+async function storePin(pin) {
+  localStorage.setItem(PIN_HASH_KEY, await sha256Hex(pin));
+  localStorage.removeItem(PIN_KEY);
+}
+
+async function verifyPin(pin) {
+  const hash = localStorage.getItem(PIN_HASH_KEY);
+  if (hash) return hash === await sha256Hex(pin);
+
+  const legacyPin = localStorage.getItem(PIN_KEY);
+  if (legacyPin && legacyPin === pin) {
+    await storePin(pin);
+    return true;
+  }
+  return false;
+}
+
+async function sha256Hex(value) {
+  const bytes = new TextEncoder().encode(value);
+  const digest = await crypto.subtle.digest("SHA-256", bytes);
+  return [...new Uint8Array(digest)].map((byte) => byte.toString(16).padStart(2, "0")).join("");
 }
 
 function escapeHtml(value) {
