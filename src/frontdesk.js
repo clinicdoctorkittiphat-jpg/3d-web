@@ -23,6 +23,11 @@ setupAutoBackup();
 window.addEventListener("beforeunload", warnBeforeClose);
 
 function render() {
+  state.activeDate = today();
+  const editingItem = state.payments.find((item) => item.id === state.editingId);
+  if (editingItem && editingItem.date !== state.activeDate) {
+    state.editingId = null;
+  }
   app.innerHTML = hasPin() && !isUnlocked() ? lockTemplate() : appTemplate();
   bindEvents();
 }
@@ -43,20 +48,20 @@ function appTemplate() {
         </div>
         <div class="top-actions">
           <button class="ghost-button" data-action="print">พิมพ์รายงาน</button>
-          <button class="ghost-button" data-action="backup-today">สำรองวันที่เลือก</button>
+          <button class="ghost-button" data-action="backup-today">สำรองวันนี้</button>
           <button class="primary-button compact-button" data-action="backup-and-close">ปิดแอปพร้อมสำรอง</button>
           <button class="danger-button" data-action="lock">ล็อกหน้าจอ</button>
         </div>
       </header>
 
       <section class="summary-grid" aria-label="สรุปยอด">
-        ${summaryCard("เงินสดวันที่เลือก", summary.cash, "cash")}
-        ${summaryCard("เงินโอนวันที่เลือก", summary.transfer, "transfer")}
-        ${summaryCard("รวมวันที่เลือก", summary.total, "total")}
+        ${summaryCard("เงินสดวันนี้", summary.cash, "cash")}
+        ${summaryCard("เงินโอนวันนี้", summary.transfer, "transfer")}
+        ${summaryCard("รวมวันนี้", summary.total, "total")}
         <article class="summary-card count">
-          <span>จำนวนรายการวันที่เลือก</span>
+          <span>จำนวนรายการวันนี้</span>
           <strong>${summary.count}</strong>
-          <small>แสดงเฉพาะยอดของ ${formatThaiDate(state.activeDate)}</small>
+          <small>แสดงเฉพาะยอดของวันนี้ ${formatThaiDate(state.activeDate)}</small>
         </article>
       </section>
 
@@ -71,8 +76,8 @@ function appTemplate() {
           </div>
 
           <div class="form-grid">
-            <label>วันที่
-              <input name="date" type="date" required value="${editItem?.date || state.activeDate}" />
+            <label>วันที่บันทึก
+              <input name="date" type="date" required readonly value="${state.activeDate}" />
             </label>
             <label>เวลา
               <input name="time" type="time" required value="${editItem?.time || nowTime()}" />
@@ -107,9 +112,6 @@ function appTemplate() {
           <div class="panel-heading compact">
             <h2>ค้นหาและส่งออก</h2>
           </div>
-          <label>เลือกวันที่สรุป
-            <input id="active-date" type="date" value="${state.activeDate}" />
-          </label>
           <label>ค้นหาชื่อ/รายการ/หมายเหตุ
             <input id="search-input" type="search" placeholder="พิมพ์เพื่อค้นหา" value="${escapeAttr(state.query)}" />
           </label>
@@ -121,8 +123,8 @@ function appTemplate() {
             </select>
           </label>
           <div class="tool-buttons">
-            <button class="ghost-button" data-action="export-csv">Export CSV วันที่เลือก</button>
-            <button class="ghost-button" data-action="backup-today">สำรองวันที่เลือกทันที</button>
+            <button class="ghost-button" data-action="export-csv">Export CSV วันนี้</button>
+            <button class="ghost-button" data-action="backup-today">สำรองวันนี้ทันที</button>
             <label class="file-button">นำเข้าไฟล์สำรอง
               <input id="import-json" type="file" accept="application/json" />
             </label>
@@ -142,7 +144,7 @@ function appTemplate() {
           </div>
           <div class="privacy-note">
             <strong>หมายเหตุความปลอดภัย</strong>
-            <span>ก่อนเลิกงานให้กดปุ่มปิดแอปพร้อมสำรอง ระบบจะดาวน์โหลดไฟล์ backup ล่าสุดให้ ถ้ากด X ปิดหน้าต่างโดยยังไม่ได้สำรอง แอปจะเตือนก่อนปิด</span>
+            <span>ข้อมูลวันนี้จะยังอยู่ในเครื่องนี้แม้ปิดหน้าต่างผิด ก่อนเลิกงานให้กดปุ่มปิดแอปพร้อมสำรองเพื่อดาวน์โหลดไฟล์ backup วันนี้</span>
           </div>
         </aside>
       </section>
@@ -219,12 +221,6 @@ function bindEvents() {
       render();
     });
   }
-
-  document.querySelector("#active-date")?.addEventListener("change", (event) => {
-    state.activeDate = event.target.value || today();
-    state.editingId = null;
-    render();
-  });
 
   document.querySelector("#search-input")?.addEventListener("input", (event) => {
     state.query = event.target.value.trim();
@@ -367,12 +363,13 @@ function summarize(rows) {
 
 function normalizePayment(data) {
   const amount = Number(data.amount);
-  if (!data.name?.trim() || !data.date || !data.time || Number.isNaN(amount)) {
-    alert("กรุณากรอกชื่อ วันที่ เวลา และจำนวนเงินให้ครบ");
+  const workDate = today();
+  if (!data.name?.trim() || !data.time || Number.isNaN(amount)) {
+    alert("กรุณากรอกชื่อ เวลา และจำนวนเงินให้ครบ");
     return null;
   }
   return {
-    date: data.date,
+    date: workDate,
     time: data.time,
     name: data.name.trim(),
     amount,
@@ -416,7 +413,7 @@ function exportCsv(rows, filename) {
 function exportDailyBackup(date, mode = "manual") {
   const rows = state.payments.filter((item) => item.date === date);
   if (!rows.length && mode === "manual") {
-    alert("ยังไม่มีรายการของวันที่เลือกให้สำรอง");
+    alert("ยังไม่มีรายการของวันนี้ให้สำรอง");
     return;
   }
   if (!rows.length) return;
@@ -456,11 +453,20 @@ function importJson(event) {
       const data = JSON.parse(String(reader.result));
       const incoming = Array.isArray(data) ? data : data.payments;
       if (!Array.isArray(incoming)) throw new Error("invalid");
-      if (confirm(`นำเข้าข้อมูล ${incoming.length} รายการ และแทนที่ข้อมูลเดิมในเครื่องนี้ใช่ไหม?`)) {
-        state.payments = incoming.map(sanitizePayment).filter(Boolean);
+      const workDate = today();
+      const todayRows = incoming
+        .map(sanitizePayment)
+        .filter((item) => item && item.date === workDate);
+      if (!todayRows.length) {
+        alert("ไฟล์นี้ไม่มีรายการของวันนี้ให้นำเข้า");
+        return;
+      }
+      if (confirm(`นำเข้าข้อมูลวันนี้ ${todayRows.length} รายการ และแทนที่ข้อมูลเดิมของวันนี้ในเครื่องนี้ใช่ไหม?`)) {
+        const olderRows = state.payments.filter((item) => item.date !== workDate);
+        state.payments = [...todayRows, ...olderRows];
         state.editingId = null;
         persist();
-        markBackupNeeded(today());
+        markBackupNeeded(workDate);
         render();
       }
     } catch {
