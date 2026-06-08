@@ -31,9 +31,6 @@ function appTemplate() {
   const dayRows = filteredPayments();
   const allForDay = state.payments.filter((item) => item.date === state.activeDate);
   const summary = summarize(allForDay);
-  const monthSummary = summarize(
-    state.payments.filter((item) => item.date.startsWith(state.activeDate.slice(0, 7)))
-  );
   const editItem = state.payments.find((item) => item.id === state.editingId);
 
   return `
@@ -46,20 +43,20 @@ function appTemplate() {
         </div>
         <div class="top-actions">
           <button class="ghost-button" data-action="print">พิมพ์รายงาน</button>
-          <button class="ghost-button" data-action="export-json">สำรองข้อมูล</button>
+          <button class="ghost-button" data-action="backup-today">สำรองวันที่เลือก</button>
           <button class="primary-button compact-button" data-action="backup-and-close">ปิดแอปพร้อมสำรอง</button>
           <button class="danger-button" data-action="lock">ล็อกหน้าจอ</button>
         </div>
       </header>
 
       <section class="summary-grid" aria-label="สรุปยอด">
-        ${summaryCard("เงินสดวันนี้", summary.cash, "cash")}
-        ${summaryCard("เงินโอนวันนี้", summary.transfer, "transfer")}
-        ${summaryCard("รวมวันนี้", summary.total, "total")}
+        ${summaryCard("เงินสดวันที่เลือก", summary.cash, "cash")}
+        ${summaryCard("เงินโอนวันที่เลือก", summary.transfer, "transfer")}
+        ${summaryCard("รวมวันที่เลือก", summary.total, "total")}
         <article class="summary-card count">
-          <span>จำนวนรายการวันนี้</span>
+          <span>จำนวนรายการวันที่เลือก</span>
           <strong>${summary.count}</strong>
-          <small>เดือนนี้ ${formatMoney(monthSummary.total)} จาก ${monthSummary.count} รายการ</small>
+          <small>แสดงเฉพาะยอดของ ${formatThaiDate(state.activeDate)}</small>
         </article>
       </section>
 
@@ -124,9 +121,8 @@ function appTemplate() {
             </select>
           </label>
           <div class="tool-buttons">
-            <button class="ghost-button" data-action="export-csv">Export CSV วันนี้</button>
-            <button class="ghost-button" data-action="export-csv-all">Export CSV ทั้งหมด</button>
-            <button class="ghost-button" data-action="backup-today">สำรองวันนี้ทันที</button>
+            <button class="ghost-button" data-action="export-csv">Export CSV วันที่เลือก</button>
+            <button class="ghost-button" data-action="backup-today">สำรองวันที่เลือกทันที</button>
             <label class="file-button">นำเข้าไฟล์สำรอง
               <input id="import-json" type="file" accept="application/json" />
             </label>
@@ -297,8 +293,6 @@ function handleAction(action, id) {
     render();
   }
   if (action === "export-csv") exportCsv(filteredPayments(), `frontdesk-${state.activeDate}.csv`);
-  if (action === "export-csv-all") exportCsv(state.payments, `frontdesk-all-${today()}.csv`);
-  if (action === "export-json") exportJson();
   if (action === "backup-today") exportDailyBackup(state.activeDate, "manual");
   if (action === "backup-and-close") backupAndClose();
   if (action === "print") window.print();
@@ -417,14 +411,6 @@ function exportCsv(rows, filename) {
   ]);
   const csv = [header, ...body].map((row) => row.map(csvCell).join(",")).join("\n");
   download(new Blob([`\uFEFF${csv}`], { type: "text/csv;charset=utf-8" }), filename);
-}
-
-function exportJson() {
-  const payload = {
-    exportedAt: new Date().toISOString(),
-    payments: state.payments,
-  };
-  download(new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" }), `frontdesk-backup-${today()}.json`);
 }
 
 function exportDailyBackup(date, mode = "manual") {
