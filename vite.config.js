@@ -6,7 +6,6 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: resolve(__dirname, "index.html"),
-        frontdesk: resolve(__dirname, "frontdesk.html"),
       },
     },
   },
