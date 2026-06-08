@@ -314,17 +314,18 @@ function handleAction(action, id) {
 }
 
 function rowTemplate(item) {
+  const method = item.method === "transfer" ? "transfer" : "cash";
   return `
     <tr>
       <td>${escapeHtml(item.time)}</td>
       <td><strong>${escapeHtml(item.name)}</strong>${item.note ? `<small>${escapeHtml(item.note)}</small>` : ""}</td>
       <td>${escapeHtml(item.service || "-")}</td>
-      <td><span class="method-pill ${item.method}">${item.method === "cash" ? "เงินสด" : "เงินโอน"}</span></td>
+      <td><span class="method-pill ${method}">${method === "cash" ? "เงินสด" : "เงินโอน"}</span></td>
       <td class="amount-cell">${formatMoney(item.amount)}</td>
       <td>${escapeHtml(item.staff || "-")}</td>
       <td class="row-actions">
-        <button data-action="edit" data-id="${item.id}">แก้ไข</button>
-        <button data-action="delete" data-id="${item.id}">ลบ</button>
+        <button data-action="edit" data-id="${escapeAttr(item.id)}">แก้ไข</button>
+        <button data-action="delete" data-id="${escapeAttr(item.id)}">ลบ</button>
       </td>
     </tr>
   `;
@@ -391,7 +392,8 @@ function normalizePayment(data) {
 
 function loadPayments() {
   try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+    return Array.isArray(saved) ? saved.map(sanitizePayment).filter(Boolean) : [];
   } catch {
     return [];
   }
@@ -469,7 +471,7 @@ function importJson(event) {
       const incoming = Array.isArray(data) ? data : data.payments;
       if (!Array.isArray(incoming)) throw new Error("invalid");
       if (confirm(`นำเข้าข้อมูล ${incoming.length} รายการ และแทนที่ข้อมูลเดิมในเครื่องนี้ใช่ไหม?`)) {
-        state.payments = incoming;
+        state.payments = incoming.map(sanitizePayment).filter(Boolean);
         state.editingId = null;
         persist();
         markBackupNeeded(today());
@@ -493,6 +495,44 @@ function download(blob, filename) {
 
 function csvCell(value) {
   return `"${String(value ?? "").replaceAll('"', '""')}"`;
+}
+
+function sanitizePayment(item) {
+  if (!item || typeof item !== "object") return null;
+  const amount = Number(item.amount);
+  if (!item.name || !item.date || !item.time || Number.isNaN(amount)) return null;
+  return {
+    id: safeText(item.id) || crypto.randomUUID(),
+    date: safeDate(item.date) || today(),
+    time: safeTime(item.time) || nowTime(),
+    name: safeText(item.name),
+    amount,
+    method: item.method === "transfer" ? "transfer" : "cash",
+    service: safeText(item.service),
+    staff: safeText(item.staff),
+    note: safeText(item.note),
+    createdAt: safeIsoDate(item.createdAt) || new Date().toISOString(),
+    updatedAt: safeIsoDate(item.updatedAt) || new Date().toISOString(),
+  };
+}
+
+function safeText(value) {
+  return String(value ?? "").replaceAll("\u0000", "").trim().slice(0, 500);
+}
+
+function safeDate(value) {
+  const text = String(value ?? "");
+  return /^\d{4}-\d{2}-\d{2}$/.test(text) ? text : "";
+}
+
+function safeTime(value) {
+  const text = String(value ?? "");
+  return /^\d{2}:\d{2}$/.test(text) ? text : "";
+}
+
+function safeIsoDate(value) {
+  const text = String(value ?? "");
+  return Number.isNaN(Date.parse(text)) ? "" : new Date(text).toISOString();
 }
 
 function today() {
