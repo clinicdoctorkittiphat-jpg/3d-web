@@ -36,6 +36,16 @@
         "telephone": "+66-81-148-1780",
         "image": "https://www.clinicdoctorkittiphat.com/doctor-knee-consult.webp",
         "medicalSpecialty": "Orthopedic",
+        "employee": {
+          "@type": "Physician",
+          "name": "นายแพทย์กิตติพัฐ ลิ่มวรวิวัฒน์",
+          "medicalSpecialty": "Orthopedic",
+          "identifier": {
+            "@type": "PropertyValue",
+            "name": "เลขที่ใบอนุญาตประกอบวิชาชีพเวชกรรม",
+            "value": "ว 43210"
+          }
+        },
         "openingHoursSpecification": [
           {
             "@type": "OpeningHoursSpecification",
@@ -439,6 +449,60 @@
         font-weight: 700;
       }
 
+      .doctor-profile {
+        padding: 28px 0 46px;
+        background: var(--warm);
+      }
+
+      .doctor-profile-card {
+        display: grid;
+        gap: 18px;
+        max-width: 860px;
+        margin: 0 auto;
+        padding: 24px;
+        background: var(--white);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        box-shadow: var(--soft-shadow);
+      }
+
+      .doctor-profile-card h2 {
+        margin-bottom: 4px;
+        color: var(--olive-dark);
+        font-size: clamp(1.35rem, 4vw, 1.85rem);
+      }
+
+      .doctor-profile-card > p {
+        margin: 0;
+        color: var(--muted);
+      }
+
+      .doctor-credentials {
+        display: grid;
+        gap: 10px;
+        margin: 0;
+      }
+
+      .doctor-credentials div {
+        display: grid;
+        gap: 2px;
+        padding: 12px 14px;
+        background: var(--sage-soft);
+        border-radius: 6px;
+      }
+
+      .doctor-credentials dt {
+        color: var(--muted);
+        font-size: 0.86rem;
+        font-weight: 700;
+      }
+
+      .doctor-credentials dd {
+        margin: 0;
+        color: var(--olive-dark);
+        font-weight: 800;
+      }
+
       .intro-band {
         padding: 34px 0 10px;
         background: var(--cream);
@@ -713,6 +777,11 @@
           grid-template-columns: repeat(3, minmax(0, 1fr));
         }
 
+        .doctor-profile-card {
+          grid-template-columns: 0.85fr 1.15fr;
+          align-items: center;
+        }
+
         .intro-panel {
           grid-template-columns: 0.8fr 1.2fr;
           align-items: center;
@@ -783,6 +852,7 @@
             <span>คลินิกกระดูกและข้อในภูเก็ต</span>
           </a>
           <nav class="nav-links" aria-label="เมนูหลัก">
+            <a href="#doctor">แพทย์</a>
             <a href="#services">บริการ</a>
             <a href="#faq">คำถามที่พบบ่อย</a>
             <a href="#hours">เวลาและแผนที่</a>
@@ -845,6 +915,28 @@
               <img src="doctor-portrait.webp" alt="หมอกิตติพัฐ แพทย์เฉพาะทางกระดูกและข้อประจำคลินิก" loading="lazy" />
               <span>คลินิกกระดูกและข้อหมอกิตติพัฐ</span>
             </figure>
+          </div>
+        </section>
+
+        <section id="doctor" class="doctor-profile" aria-labelledby="doctor-title">
+          <div class="container">
+            <div class="doctor-profile-card">
+              <div>
+                <p class="eyebrow">แพทย์ประจำคลินิก</p>
+                <h2 id="doctor-title">นพ. กิตติพัฐ ลิ่มวรวิวัฒน์</h2>
+                <p>ดูแลผู้ป่วยโดยเน้นการตรวจหาสาเหตุ อธิบายทางเลือก และพิจารณาการรักษาโดยไม่ผ่าตัดเมื่อเหมาะสม</p>
+              </div>
+              <dl class="doctor-credentials">
+                <div>
+                  <dt>วุฒิบัตรและสาขาเฉพาะทาง</dt>
+                  <dd>ศัลยกรรมกระดูกและข้อ</dd>
+                </div>
+                <div>
+                  <dt>เลขที่ใบอนุญาตประกอบวิชาชีพเวชกรรม</dt>
+                  <dd>ว 43210</dd>
+                </div>
+              </dl>
+            </div>
           </div>
         </section>
 
