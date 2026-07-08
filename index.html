@@ -35,6 +35,14 @@
         "url": "https://www.clinicdoctorkittiphat.com/",
         "telephone": "+66-81-148-1780",
         "image": "https://www.clinicdoctorkittiphat.com/doctor-knee-consult.webp",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "107 ถนนกระบี่",
+          "addressLocality": "ตำบลตลาดเหนือ อำเภอเมือง",
+          "addressRegion": "ภูเก็ต",
+          "postalCode": "83000",
+          "addressCountry": "TH"
+        },
         "medicalSpecialty": "Orthopedic",
         "employee": {
           "@type": "Physician",
@@ -95,6 +103,7 @@
         color: var(--ink);
         background: linear-gradient(180deg, var(--warm), var(--cream) 36%, var(--warm));
         line-height: 1.72;
+        padding-bottom: env(safe-area-inset-bottom);
       }
 
       a {
@@ -536,6 +545,30 @@
         color: var(--muted);
       }
 
+      .prepare-panel {
+        display: grid;
+        gap: 14px;
+        margin-top: 18px;
+        padding: 18px;
+        background: #fff8ec;
+        border: 1px solid rgba(184, 154, 99, 0.26);
+        border-radius: 8px;
+      }
+
+      .prepare-panel h3 {
+        margin: 0;
+        color: var(--olive-dark);
+        font-size: 1.1rem;
+      }
+
+      .prepare-list {
+        display: grid;
+        gap: 8px;
+        margin: 0;
+        padding-left: 1.2rem;
+        color: var(--muted);
+      }
+
       section {
         padding: 48px 0;
       }
@@ -599,6 +632,16 @@
         margin: 0;
         color: var(--muted);
         font-size: 0.95rem;
+      }
+
+      .card a {
+        display: inline-flex;
+        margin-top: 10px;
+        color: var(--olive-dark);
+        font-size: 0.92rem;
+        font-weight: 800;
+        text-decoration: underline;
+        text-underline-offset: 4px;
       }
 
       .why {
@@ -672,6 +715,24 @@
         display: grid;
         gap: 10px;
         margin-top: 18px;
+      }
+
+      .address-card {
+        margin-top: 18px;
+        padding: 14px;
+        background: var(--sage-soft);
+        border-radius: 8px;
+      }
+
+      .address-card strong {
+        display: block;
+        color: var(--olive-dark);
+        margin-bottom: 4px;
+      }
+
+      .address-card address {
+        color: var(--muted);
+        font-style: normal;
       }
 
       .hours-row {
@@ -754,6 +815,41 @@
         gap: 8px;
       }
 
+      .floating-contact {
+        position: fixed;
+        right: 12px;
+        bottom: calc(12px + env(safe-area-inset-bottom));
+        left: 12px;
+        z-index: 20;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 8px;
+        padding: 8px;
+        background: rgba(255, 253, 250, 0.94);
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        box-shadow: 0 16px 40px rgba(36, 53, 36, 0.18);
+        backdrop-filter: blur(18px);
+      }
+
+      .floating-contact a {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 42px;
+        padding: 8px 10px;
+        border-radius: 999px;
+        color: var(--olive-dark);
+        background: var(--sage-soft);
+        font-size: 0.86rem;
+        font-weight: 800;
+      }
+
+      .floating-contact a:first-child {
+        color: var(--white);
+        background: var(--olive-dark);
+      }
+
       @media (min-width: 620px) {
         .hero-actions,
         .cta-actions {
@@ -786,6 +882,10 @@
           grid-template-columns: 0.8fr 1.2fr;
           align-items: center;
         }
+
+        .prepare-list {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
       }
 
       @media (min-width: 860px) {
@@ -813,6 +913,10 @@
         .info-grid {
           grid-template-columns: 0.82fr 1.18fr;
           align-items: stretch;
+        }
+
+        .floating-contact {
+          display: none;
         }
 
         section {
@@ -946,6 +1050,15 @@
               <strong>ดูแลอาการปวดให้กลับไปใช้ชีวิตได้มั่นใจขึ้น</strong>
               <p>เหมาะสำหรับผู้ที่มีอาการปวดเรื้อรัง ปวดจากการใช้งาน หรือเริ่มกังวลเรื่องข้อเสื่อม โดยเน้นตรวจหาสาเหตุ อธิบายผล และวางแผนรักษาเป็นขั้นตอน</p>
             </div>
+            <div class="prepare-panel" aria-label="สิ่งที่ควรเตรียมก่อนมาพบแพทย์">
+              <h3>ก่อนมาพบแพทย์ ควรเตรียมอะไรบ้าง?</h3>
+              <ul class="prepare-list">
+                <li>ประวัติยา โรคประจำตัว และประวัติแพ้ยา</li>
+                <li>ผลตรวจเดิม เช่น เอกซเรย์ MRI หรือเอกสารจากโรงพยาบาล</li>
+                <li>จดตำแหน่งที่ปวด ระยะเวลาที่เป็น และกิจกรรมที่ทำให้อาการแย่ลง</li>
+                <li>หากมีอุบัติเหตุรุนแรงหรืออาการผิดปกติเฉียบพลัน ควรไปโรงพยาบาลทันที</li>
+              </ul>
+            </div>
           </div>
         </section>
 
@@ -959,18 +1072,22 @@
               <article class="card">
                 <h3><span class="icon">01</span>ปวดเข่า / ข้อเข่าเสื่อม</h3>
                 <p>ประเมินสาเหตุ วางแผนลดปวด ฟื้นฟูการใช้งาน และชะลอข้อเสื่อม</p>
+                <a href="/knee-pain.html">อ่านเรื่องปวดเข่าเพิ่มเติม</a>
               </article>
               <article class="card">
                 <h3><span class="icon">02</span>ปวดหลัง / ปวดร้าวลงขา</h3>
                 <p>ตรวจอาการปวดหลัง เส้นประสาทถูกกดทับ และอาการร้าวลงขา</p>
+                <a href="/back-pain.html">อ่านเรื่องปวดหลังเพิ่มเติม</a>
               </article>
               <article class="card">
                 <h3><span class="icon">03</span>ปวดคอ บ่า ไหล่</h3>
                 <p>ดูแลออฟฟิศซินโดรม ไหล่ติด เอ็นอักเสบ และปัญหาการเคลื่อนไหว</p>
+                <a href="/shoulder-pain.html">อ่านเรื่องปวดไหล่เพิ่มเติม</a>
               </article>
               <article class="card">
                 <h3><span class="icon">04</span>มือชา / นิ้วล็อค</h3>
                 <p>ตรวจอาการชา เจ็บนิ้ว ขยับติด และปัญหาเส้นเอ็นบริเวณมือ</p>
+                <a href="/hand-numbness-trigger-finger.html">อ่านเรื่องมือชาและนิ้วล็อค</a>
               </article>
               <article class="card">
                 <h3><span class="icon">05</span>อาการบาดเจ็บจากการใช้งานและกีฬา</h3>
@@ -979,6 +1096,7 @@
               <article class="card">
                 <h3><span class="icon">06</span>เอกซเรย์ดิจิทัล</h3>
                 <p>ช่วยประเมินกระดูกและข้อได้ชัดเจน เพื่อประกอบการวางแผนรักษา</p>
+                <a href="/knee-osteoarthritis.html">อ่านเรื่องข้อเข่าเสื่อม</a>
               </article>
             </div>
           </div>
@@ -1083,6 +1201,10 @@
                   <span>ปิดทำการ</span>
                 </div>
               </div>
+              <div class="address-card">
+                <strong>ที่อยู่คลินิก</strong>
+                <address>107 ถนนกระบี่ ตำบลตลาดเหนือ อำเภอเมือง จังหวัดภูเก็ต 83000</address>
+              </div>
             </div>
             <div class="map-placeholder" aria-label="แผนที่ Google Map คลินิกกระดูกและข้อหมอกิตติพัฐ">
               <iframe
@@ -1091,7 +1213,7 @@
                 loading="lazy"
                 referrerpolicy="no-referrer-when-downgrade"
               ></iframe>
-              <a class="button secondary" href="https://www.google.com/maps/search/?api=1&query=%E0%B8%84%E0%B8%A5%E0%B8%B4%E0%B8%99%E0%B8%B4%E0%B8%81%E0%B8%81%E0%B8%A3%E0%B8%B0%E0%B8%94%E0%B8%B9%E0%B8%81%E0%B9%81%E0%B8%A5%E0%B8%B0%E0%B8%82%E0%B9%89%E0%B8%AD%E0%B8%AB%E0%B8%A1%E0%B8%AD%E0%B8%81%E0%B8%B4%E0%B8%95%E0%B8%95%E0%B8%B4%E0%B8%9E%E0%B8%B1%E0%B8%90%20Phuket" target="_blank" rel="noreferrer">เปิดเส้นทางใน Google Maps</a>
+              <a class="button secondary" href="https://www.google.com/maps/search/?api=1&query=107%20%E0%B8%96%E0%B8%99%E0%B8%99%E0%B8%81%E0%B8%A3%E0%B8%B0%E0%B8%9A%E0%B8%B5%E0%B9%88%20%E0%B8%95%E0%B8%B3%E0%B8%9A%E0%B8%A5%E0%B8%95%E0%B8%A5%E0%B8%B2%E0%B8%94%E0%B9%80%E0%B8%AB%E0%B8%99%E0%B8%B7%E0%B8%AD%20%E0%B8%AD%E0%B8%B3%E0%B9%80%E0%B8%A0%E0%B8%AD%E0%B9%80%E0%B8%A1%E0%B8%B7%E0%B8%AD%E0%B8%87%20%E0%B8%A0%E0%B8%B9%E0%B9%80%E0%B8%81%E0%B9%87%E0%B8%95%2083000" target="_blank" rel="noreferrer">เปิดเส้นทางใน Google Maps</a>
             </div>
           </div>
         </section>
@@ -1120,6 +1242,11 @@
           <span>เน้นการรักษาโดยไม่ผ่าตัดเมื่อเหมาะสม · <a href="/privacy.html">นโยบายความเป็นส่วนตัว</a></span>
         </div>
       </footer>
+      <nav class="floating-contact" aria-label="ปุ่มติดต่อด่วนบนมือถือ">
+        <a href="tel:+66811481780">โทร</a>
+        <a href="https://line.me/R/ti/p/@drkittiphat" target="_blank" rel="noreferrer">LINE</a>
+        <a href="https://www.google.com/maps/search/?api=1&query=107%20%E0%B8%96%E0%B8%99%E0%B8%99%E0%B8%81%E0%B8%A3%E0%B8%B0%E0%B8%9A%E0%B8%B5%E0%B9%88%20%E0%B8%95%E0%B8%B3%E0%B8%9A%E0%B8%A5%E0%B8%95%E0%B8%A5%E0%B8%B2%E0%B8%94%E0%B9%80%E0%B8%AB%E0%B8%99%E0%B8%B7%E0%B8%AD%20%E0%B8%AD%E0%B8%B3%E0%B9%80%E0%B8%A0%E0%B8%AD%E0%B9%80%E0%B8%A1%E0%B8%B7%E0%B8%AD%E0%B8%87%20%E0%B8%A0%E0%B8%B9%E0%B9%80%E0%B8%81%E0%B9%87%E0%B8%95%2083000" target="_blank" rel="noreferrer">แผนที่</a>
+      </nav>
     </div>
     <script>
       document.querySelectorAll('a[href^="tel:"]').forEach((link) => {
