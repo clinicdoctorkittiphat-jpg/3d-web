@@ -644,6 +644,68 @@
         text-underline-offset: 4px;
       }
 
+      .xray-showcase {
+        padding-top: 0;
+        background: var(--cream);
+      }
+
+      .xray-panel {
+        display: grid;
+        gap: 18px;
+        padding: 22px;
+        background: var(--white);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        box-shadow: var(--soft-shadow);
+      }
+
+      .xray-copy {
+        display: grid;
+        gap: 8px;
+        align-content: center;
+      }
+
+      .xray-copy h2 {
+        margin: 0;
+        color: var(--olive-dark);
+        font-size: clamp(1.35rem, 4vw, 2rem);
+        line-height: 1.25;
+      }
+
+      .xray-copy p {
+        margin: 0;
+        color: var(--muted);
+      }
+
+      .xray-photos {
+        display: grid;
+        gap: 12px;
+      }
+
+      .xray-photo {
+        margin: 0;
+        overflow: hidden;
+        background: var(--sage-soft);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        box-shadow: var(--soft-shadow);
+      }
+
+      .xray-photo img {
+        display: block;
+        width: 100%;
+        aspect-ratio: 4 / 5;
+        object-fit: cover;
+        object-position: center;
+      }
+
+      .xray-photo figcaption {
+        padding: 10px 12px;
+        color: var(--olive-dark);
+        font-size: 0.9rem;
+        font-weight: 800;
+      }
+
       .why {
         background: var(--sage-soft);
       }
@@ -886,6 +948,10 @@
         .prepare-list {
           grid-template-columns: repeat(2, minmax(0, 1fr));
         }
+
+        .xray-photos {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
       }
 
       @media (min-width: 860px) {
@@ -913,6 +979,11 @@
         .info-grid {
           grid-template-columns: 0.82fr 1.18fr;
           align-items: stretch;
+        }
+
+        .xray-panel {
+          grid-template-columns: 0.72fr 1.28fr;
+          align-items: center;
         }
 
         .floating-contact {
@@ -1096,8 +1167,30 @@
               <article class="card">
                 <h3><span class="icon">06</span>เอกซเรย์ดิจิทัล</h3>
                 <p>ช่วยประเมินกระดูกและข้อได้ชัดเจน เพื่อประกอบการวางแผนรักษา</p>
-                <a href="/knee-osteoarthritis.html">อ่านเรื่องข้อเข่าเสื่อม</a>
+                <a href="#xray">ดูภาพเอกซเรย์ดิจิทัลที่คลินิก</a>
               </article>
+            </div>
+          </div>
+        </section>
+
+        <section id="xray" class="xray-showcase" aria-labelledby="xray-title">
+          <div class="container">
+            <div class="xray-panel">
+              <div class="xray-copy">
+                <p class="eyebrow">เอกซเรย์ดิจิทัล</p>
+                <h2 id="xray-title">มีเอกซเรย์ดิจิทัลที่คลินิก</h2>
+                <p>ช่วยให้แพทย์ใช้ภาพประกอบการประเมินกระดูกและข้อเมื่อมีข้อบ่งชี้ โดยอธิบายผลร่วมกับอาการและการตรวจร่างกายของผู้ป่วยแต่ละราย</p>
+              </div>
+              <div class="xray-photos" aria-label="ภาพเครื่องเอกซเรย์ดิจิทัลในคลินิก">
+                <figure class="xray-photo">
+                  <img src="xray-machine.webp" alt="หมอกิตติพัฐยืนข้างเครื่องเอกซเรย์ดิจิทัลในคลินิก" loading="lazy" />
+                  <figcaption>เครื่องเอกซเรย์ดิจิทัลภายในคลินิก</figcaption>
+                </figure>
+                <figure class="xray-photo">
+                  <img src="xray-workstation.webp" alt="หมอกิตติพัฐดูภาพเอกซเรย์ดิจิทัลจากจอคอมพิวเตอร์" loading="lazy" />
+                  <figcaption>ดูภาพเอกซเรย์ประกอบการประเมินอาการ</figcaption>
+                </figure>
+              </div>
             </div>
           </div>
         </section>
