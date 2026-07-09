@@ -12,6 +12,7 @@ export default defineConfig({
         backPain: resolve(__dirname, "back-pain.html"),
         shoulderPain: resolve(__dirname, "shoulder-pain.html"),
         handNumbnessTriggerFinger: resolve(__dirname, "hand-numbness-trigger-finger.html"),
+        digitalXray: resolve(__dirname, "digital-xray.html"),
       },
     },
   },
