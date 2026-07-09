@@ -50,10 +50,6 @@
           "medicalSpecialty": "Orthopedic",
           "alumniOf": [
             {
-              "@type": "EducationalOrganization",
-              "name": "โรงเรียนเตรียมอุดมศึกษา"
-            },
-            {
               "@type": "CollegeOrUniversity",
               "name": "คณะแพทยศาสตร์ จุฬาลงกรณ์มหาวิทยาลัย"
             }
@@ -568,6 +564,29 @@
         margin: 0;
         color: var(--olive-dark);
         font-weight: 800;
+      }
+
+      .doctor-degree-photo {
+        margin: 14px 0 0;
+        overflow: hidden;
+        background: var(--sage-soft);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        box-shadow: var(--soft-shadow);
+      }
+
+      .doctor-degree-photo img {
+        display: block;
+        width: 100%;
+        aspect-ratio: 4 / 3;
+        object-fit: cover;
+      }
+
+      .doctor-degree-photo figcaption {
+        padding: 9px 11px;
+        color: var(--muted);
+        font-size: 0.84rem;
+        line-height: 1.45;
       }
 
       .intro-band {
@@ -1158,12 +1177,12 @@
                 <p class="eyebrow">แพทย์ประจำคลินิก</p>
                 <h2 id="doctor-title">นพ. กิตติพัฐ ลิ่มวรวิวัฒน์</h2>
                 <p>ดูแลผู้ป่วยโดยเน้นการตรวจหาสาเหตุ อธิบายทางเลือก และพิจารณาการรักษาโดยไม่ผ่าตัดเมื่อเหมาะสม</p>
+                <figure class="doctor-degree-photo">
+                  <img src="doctor-chula-graduation.webp" alt="ภาพพิธีรับพระราชทานปริญญา จุฬาลงกรณ์มหาวิทยาลัย ของนพ. กิตติพัฐ ลิ่มวรวิวัฒน์" loading="lazy" />
+                  <figcaption>แพทยศาสตรบัณฑิต คณะแพทยศาสตร์ จุฬาลงกรณ์มหาวิทยาลัย</figcaption>
+                </figure>
               </div>
               <dl class="doctor-credentials">
-                <div>
-                  <dt>การศึกษา</dt>
-                  <dd>โรงเรียนเตรียมอุดมศึกษา</dd>
-                </div>
                 <div>
                   <dt>แพทยศาสตรบัณฑิต</dt>
                   <dd>คณะแพทยศาสตร์ จุฬาลงกรณ์มหาวิทยาลัย</dd>
