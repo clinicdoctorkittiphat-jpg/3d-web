@@ -111,11 +111,11 @@ input:focus,select:focus,textarea:focus,button:focus-visible{ outline:2px solid 
     <textarea id="sym" rows="2" style="min-height:60px" placeholder="เช่น ปวดเข่าขวา เป็นมา 2 สัปดาห์"></textarea>
     <div class="err" id="err"></div>
 
-    <button class="go" id="goBtn" onclick="sendLine()">
+    <button class="go" id="goBtn">
       <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 5.64 2 10.13c0 4.02 3.56 7.39 8.37 8.03.33.07.77.22.89.5.1.26.07.66.03.92l-.14.86c-.04.26-.2 1.01.89.55 1.09-.46 5.87-3.46 8.01-5.92C21.53 13.35 22 11.8 22 10.13 22 5.64 17.52 2 12 2z"/></svg>
       ส่งคำขอจองทาง LINE
     </button>
-    <button class="alt" onclick="copyReq()">หรือ คัดลอกข้อความจอง (ส่งเองใน LINE / โทรแจ้ง)</button>
+    <button class="alt" id="copyBtn">หรือ คัดลอกข้อความจอง (ส่งเองใน LINE / โทรแจ้ง)</button>
 
     <div class="preview" id="pv">
       <p class="rules" style="margin:0"><b>ข้อความที่จะส่ง:</b></p>
@@ -139,104 +139,7 @@ input:focus,select:focus,textarea:focus,button:focus-visible{ outline:2px solid 
 </div>
 <div class="toast" id="toast"></div>
 
-<script>
-'use strict';
-/* ═══ ตั้งค่าคลินิก — แก้ 2 บรรทัดนี้ก่อนใช้จริง ═══ */
-const CLINIC = {
-  lineOA: '@drkittiphat',  // LINE OA ของคลินิก
-  phone:  '081-148-1780',  // เบอร์คลินิก
-};
-/* ═══════════════════════════════════════════════ */
-
-document.getElementById('telShow').textContent = CLINIC.phone;
-const SLOT_ANY = 'ช่วงไหนก็ได้ (ให้เจ้าหน้าที่เลือกให้)';
-let pickedSlot = null;
-
-function slotsFor(dstr){
-  const day = new Date(dstr+'T00:00:00').getDay();
-  if(day===0) return null;
-  if(day===6) return [
-    {t:'09:00–09:45', d:'ช่วงเช้า'}, {t:'10:00–10:50', d:'ช่วงสาย'},
-    {t:'11:00–11:40', d:'ก่อนเที่ยง'}, {t:SLOT_ANY, d:''}];
-  return [
-    {t:'17:00–17:45', d:'หัวค่ำ'}, {t:'18:00–18:50', d:'ช่วงกลาง'},
-    {t:'19:10–19:40', d:'ช่วงท้าย'}, {t:SLOT_ANY, d:''}];
-}
-function todayStr(){ const d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
-function thDate(dstr){ return new Date(dstr+'T00:00:00').toLocaleDateString('th-TH',{weekday:'long',day:'numeric',month:'long'}); }
-function toast(t){ const el=document.getElementById('toast'); el.textContent=t; el.classList.add('show'); setTimeout(()=>el.classList.remove('show'),2600); }
-
-function renderSlots(){
-  const d = document.getElementById('d').value;
-  const box = document.getElementById('slots');
-  const closed = document.getElementById('closedMsg');
-  const stepTime = document.getElementById('stepTime');
-  pickedSlot = null;
-  if(!d){ box.innerHTML=''; closed.style.display='none'; return; }
-  const s = slotsFor(d);
-  if(!s){ closed.style.display='block'; stepTime.style.display='none'; return; }
-  closed.style.display='none'; stepTime.style.display='block';
-  box.innerHTML = s.map((x,i)=>`<button type="button" class="slot" data-i="${i}" onclick="pick(${i})">${x.t}${x.d?`<small>${x.d}</small>`:'<small>&nbsp;</small>'}</button>`).join('');
-}
-function pick(i){
-  const d = document.getElementById('d').value;
-  pickedSlot = slotsFor(d)[i].t;
-  document.querySelectorAll('.slot').forEach((b,bi)=>b.classList.toggle('on', bi===i));
-}
-function buildMsg(){
-  const d = document.getElementById('d').value;
-  const nm = document.getElementById('nm').value.trim();
-  const ph = document.getElementById('ph').value.trim();
-  const tp = document.getElementById('tp').value;
-  const sym = document.getElementById('sym').value.trim();
-  const err = document.getElementById('err');
-  err.classList.remove('show');
-  if(!d){ err.textContent='กรุณาเลือกวันที่ค่ะ'; err.classList.add('show'); return null; }
-  if(!slotsFor(d)){ err.textContent='วันอาทิตย์คลินิกปิดค่ะ กรุณาเลือกวันอื่นนะคะ'; err.classList.add('show'); return null; }
-  if(d < todayStr()){ err.textContent='กรุณาเลือกวันที่ยังมาไม่ถึงค่ะ'; err.classList.add('show'); return null; }
-  if(!pickedSlot){ err.textContent='กรุณาเลือกช่วงเวลาค่ะ (เลือก "ช่วงไหนก็ได้" ก็ได้นะคะ)'; err.classList.add('show'); return null; }
-  if(!nm){ err.textContent='กรุณากรอกชื่อค่ะ'; err.classList.add('show'); return null; }
-  if(!/^0\d[\d\s-]{7,}$/.test(ph)){ err.textContent='กรุณากรอกเบอร์โทรที่ติดต่อได้ค่ะ (ขึ้นต้นด้วย 0)'; err.classList.add('show'); return null; }
-  return `ขอจองคิวค่ะ/ครับ 🙏
-ชื่อ: ${nm}
-เบอร์: ${ph}
-วันที่สะดวก: ${thDate(d)}
-ช่วงเวลา: ${pickedSlot}
-มาเรื่อง: ${tp}${sym?`
-อาการ: ${sym}`:''}
-(จองผ่านหน้าเว็บ)`;
-}
-function showPreview(m){
-  document.getElementById('pvTxt').textContent = m;
-  document.getElementById('pv').classList.add('show');
-}
-function sendLine(){
-  const m = buildMsg(); if(!m) return;
-  showPreview(m);
-  if(CLINIC.lineOA){
-    const oa = CLINIC.lineOA.startsWith('@') ? CLINIC.lineOA : '@'+CLINIC.lineOA;
-    location.href = 'https://line.me/R/oaMessage/'+encodeURIComponent(oa)+'/?'+encodeURIComponent(m);
-  } else {
-    doCopy(m, 'คัดลอกข้อความแล้ว — เปิด LINE คลินิกแล้ววางส่งได้เลยค่ะ');
-  }
-}
-function copyReq(){
-  const m = buildMsg(); if(!m) return;
-  showPreview(m);
-  doCopy(m, 'คัดลอกแล้ว — วางส่งใน LINE คลินิก หรือโทร '+CLINIC.phone+' ค่ะ');
-}
-function doCopy(m, okMsg){
-  const fb = ()=>{ toast('คัดลอกอัตโนมัติไม่ได้ — กดค้างที่ข้อความด้านล่างเพื่อคัดลอกเองนะคะ'); };
-  if(navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(m).then(()=>toast(okMsg), fb);
-  else fb();
-}
-(function(){
-  const d = document.getElementById('d');
-  d.min = todayStr();
-  d.addEventListener('change', renderSlots);
-  renderSlots();
-})();
-</script>
+<script src="/booking.js" defer></script>
 
 </body>
 </html>
